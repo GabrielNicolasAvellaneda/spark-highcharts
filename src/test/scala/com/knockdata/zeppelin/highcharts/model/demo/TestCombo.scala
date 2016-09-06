@@ -28,7 +28,7 @@ import org.junit.Test
 class TestCombo extends AbstractTestCase{
 
   @Test
-  def testAreaBasic: Unit = {
+  def testAreaBasic(): Unit = {
     val title = new Title("Combination chart")
 
     val subtitle = new Subtitle(
@@ -53,7 +53,7 @@ class TestCombo extends AbstractTestCase{
       Map("name" -> "Joe", "y" -> 19)).typ("pie").
       center(100, 80).
       size(100).
-      dataLabels("enabled", true)
+      dataLabels("enabled" -> true)
 
 
     val chart = new Highcharts(seriesJane, seriesJohn, seriesJoe, seriesAverage,seriesTotalConsumption)

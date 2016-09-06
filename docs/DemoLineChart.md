@@ -7,7 +7,6 @@ Based on [Line Chart Demo](http://www.highcharts.com/demo/line-basic)
 
 import com.knockdata.zeppelin.highcharts._
 import com.knockdata.zeppelin.highcharts.model._
-
 import sqlContext.implicits._
 
 val Tokyo = Seq(7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6)
@@ -23,10 +22,12 @@ val dataFrame = (Tokyo ++ NewYork ++ Berlin ++ London).toDF("city", "temperature
 
 dataFrame.show()
 
-highcharts(dataFrame)
+val chart = highcharts(dataFrame
   .seriesCol("city")
-  .series("y" -> col("temperature"))
-  .plot()
+  .series("y" -> col("temperature")))
+
+chart.plot()
+
 ```
 
 ## Line Chart Basic
@@ -44,10 +45,14 @@ an line chart with
 
 import com.knockdata.zeppelin.highcharts._
 import com.knockdata.zeppelin.highcharts.model._
+import sqlContext.implicits._
 
-highcharts(bank)
+val chart = highcharts(bank
   .series("x" -> "age", "y" -> avg(col("balance")))
-  .orderBy(col("age")).plot()
+  .orderBy(col("age")))
+
+chart.plot()
+
 
 ```
 
@@ -66,11 +71,16 @@ an line chart with
 
 import com.knockdata.zeppelin.highcharts._
 import com.knockdata.zeppelin.highcharts.model._
+import sqlContext.implicits._
 
 
-highcharts(bank)
+val chart = highcharts(bank
   .series("x" -> "age", "y" -> avg(col("balance")))
-  .orderBy(col("age").asc).plot()
+  .orderBy(col("age").asc))
+
+chart.plot()
+
+
 ```
 
 ## Line Chart Basic, Descending Order
@@ -88,13 +98,17 @@ an line chart with
 
 import com.knockdata.zeppelin.highcharts._
 import com.knockdata.zeppelin.highcharts.model._
+import sqlContext.implicits._
 
 
-highcharts(bank)
+val chart = highcharts(bank
   .series("name" -> "age", "y" -> avg(col("balance")))
-  .orderBy(col("age").desc)
+  .orderBy(col("age").desc))
   .xAxis(new XAxis("age").typ("category"))
-  .plot()
+
+
+chart.plot()
+
 
 ```
 
@@ -114,11 +128,14 @@ an line chart with
 
 import com.knockdata.zeppelin.highcharts._
 import com.knockdata.zeppelin.highcharts.model._
+import sqlContext.implicits._
 
-highcharts(bank).seriesCol("marital")
+val chart = highcharts(bank.seriesCol("marital")
   .series("name" -> "age", "y" -> avg(col("balance")))
-  .orderBy(col("age"))
-  .plot()
+  .orderBy(col("age")))
+
+chart.plot()
+
 ```
 
 ## Line Chart Multiple Series, With Options
@@ -137,11 +154,12 @@ an line chart with
 
 import com.knockdata.zeppelin.highcharts._
 import com.knockdata.zeppelin.highcharts.model._
+import sqlContext.implicits._
 
-highcharts(bank).seriesCol("marital")
+val chart = highcharts(bank.seriesCol("marital")
   .series("name" -> "age",
     "y" -> avg(col("balance")))
-  .orderBy(col("age"))
+  .orderBy(col("age")))
   .title(new Title("Marital Job Average Balance").x(-20))
   .subtitle(new Subtitle("Source: Zeppelin Tutorial").x(-20))
   .xAxis(new XAxis("Age").typ("category"))
@@ -150,7 +168,9 @@ highcharts(bank).seriesCol("marital")
   .tooltip(new Tooltip().valueSuffix("¥"))
   .legend(new Legend().layout("vertical").align("right")
     .verticalAlign("middle").borderWidth(0))
-  .plot()
+
+chart.plot()
+
 
 ```
 
@@ -169,12 +189,16 @@ an line chart with
 
 import com.knockdata.zeppelin.highcharts._
 import com.knockdata.zeppelin.highcharts.model._
+import sqlContext.implicits._
 
-highcharts(bank).series("name" -> "job", "y" -> avg(col("balance")))
-  .orderBy(col("job"))
-  .plotOptions(new plotOptions.Line()
+val chart = highcharts(bank.series("name" -> "job", "y" -> avg(col("balance")))
+  .orderBy(col("job")))
+  .plotOptions(PlotOptions.line
     .dataLabels("enabled" -> true, "format" -> "{point.y:.2f}"))
-  .tooltip(new Tooltip().valueDecimals(2)).plot()
+  .tooltip(new Tooltip().valueDecimals(2))
+
+chart.plot()
+
 
 ```
 
@@ -197,18 +221,22 @@ linearGradient is not described in [Highcharts API](http://api.highcharts.com/hi
 
 import com.knockdata.zeppelin.highcharts._
 import com.knockdata.zeppelin.highcharts.model._
+import sqlContext.implicits._
 
 
-val options = new plotOptions.Area()
+val options = PlotOptions.area
   .fillColorLinearGradient("x1" -> 0, "y1" -> 0, "x2" -> 0, "y2" -> 1)
   .fillColorStops((0, "Highcharts.getOptions().colors[0]"),
       (1, "Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')"))
 
 
-highcharts(bank).series("name" -> "age", "y" -> avg(col("balance")))
-  .orderBy(col("age"))
-  .chart(new Chart("area").zoomType("x"))
-  .plotOptions(options).plot()
+val chart = highcharts(bank.series("name" -> "age", "y" -> avg(col("balance")))
+  .orderBy(col("age")))
+  .chart(Chart.area.zoomType("x"))
+  .plotOptions(options)
+
+chart.plot()
+
 ```
 
 ## Spline Inverted
@@ -226,23 +254,20 @@ an line chart with
 
 import com.knockdata.zeppelin.highcharts._
 import com.knockdata.zeppelin.highcharts.model._
+import sqlContext.implicits._
 
-highcharts(bank).series("x" -> "age", "y" -> avg(col("balance")))
-  .orderBy(col("age"))
-  .chart(new Chart("spline").inverted(true))
-  .plot()
+val chart = highcharts(bank.series("x" -> "age", "y" -> avg(col("balance")))
+  .orderBy(col("age")))
+  .chart(Chart.spline.inverted(true))
+
+chart.plot()
+
 ```
 
-
-```scala
-
-import com.knockdata.zeppelin.highcharts._
-import com.knockdata.zeppelin.highcharts.model._
-
-TODO
+@Test
+def demoSplineWithSymbols(): Unit = {
 // TODO
-```
-
+}
 ## Spline With Plot Bands
 
 Based on [Spline Plot Bands](http://www.highcharts.com/demo/spline-plot-bands)
@@ -258,6 +283,7 @@ an line chart with
 
 import com.knockdata.zeppelin.highcharts._
 import com.knockdata.zeppelin.highcharts.model._
+import sqlContext.implicits._
 
 val yAxis = new YAxis("Average Balance").plotBands(
   Map("from" -> 0, "to" -> 1000, "color" -> "rgba(68, 170, 213, 0.1)",
@@ -277,10 +303,13 @@ val yAxis = new YAxis("Average Balance").plotBands(
     )
   )
 )
-highcharts(bank).series("x" -> "age", "y" -> avg(col("balance")))
-  .orderBy(col("age"))
+
+val chart = highcharts(bank.series("x" -> "age", "y" -> avg(col("balance")))
+  .orderBy(col("age")))
   .yAxis(yAxis)
-  .plot()
+
+chart.plot()
+
 ```
 
 ## Time Data With Irregular Intervals
@@ -298,10 +327,11 @@ an line chart with
 
 import com.knockdata.zeppelin.highcharts._
 import com.knockdata.zeppelin.highcharts.model._
+import sqlContext.implicits._
 
-highcharts(DataSet.dfSnowDepth).seriesCol("year")
-  .series("x" -> "time", "y" -> "depth")
-  .chart(new Chart("spline"))
+val chart = highcharts(DataSet.dfSnowDepth.seriesCol("year")
+  .series("x" -> "time", "y" -> "depth"))
+  .chart(Chart.spline)
   .title(new Title("Snow depth at Vikjafjellet, Norway"))
   .subtitle(new Subtitle("Irregular time data in Highcharts JS"))
   .xAxis(new XAxis("Date").typ("datetime").dateTimeLabelFormats(
@@ -309,6 +339,8 @@ highcharts(DataSet.dfSnowDepth).seriesCol("year")
   .yAxis(new YAxis("Snow depth (m)").min(0))
   .tooltip(new Tooltip().headerFormat("<b>{series.name}</b><br>").pointFormat(
     "{point.x:%e. %b}: {point.y:.2f} m"))
-  .plotOptions(new plotOptions.Spline().marker("enabled" -> true))
-  .plot()
+  .plotOptions(PlotOptions.spline.marker("enabled" -> true))
+
+chart.plot()
+
 ```

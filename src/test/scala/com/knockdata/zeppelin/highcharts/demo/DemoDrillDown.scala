@@ -17,9 +17,10 @@
 
 package com.knockdata.zeppelin.highcharts.demo
 
+import java.io.PrintWriter
+
 import com.knockdata.zeppelin.highcharts._
 import com.knockdata.zeppelin.highcharts.model.Chart
-
 import org.apache.spark.sql.functions._
 import org.junit.Test
 
@@ -44,14 +45,17 @@ class DemoDrillDown {
   // * x axis data from column $"job"
   // * y axis aggregated the average balance
   @Test
-  def demoDrilldownBasic: Unit = {
-    highcharts(bank)
+  def demoDrilldownBasic(): Unit = {
+    val chart = highcharts(bank
       .series("name" -> "marital",
         "y" -> avg(col("balance")))
       .drilldown("name" -> "job",
-        "y" -> avg(col("balance")))
+        "y" -> avg(col("balance"))))
       .chart(Chart.column)
-      .plot()
+
+    chart.plot()
+
+    new PrintWriter("target/demoDrilldownBasic.json") { write(chart.replaced); close }
   }
 
   // ## Drilldown 2 Levels
@@ -78,17 +82,20 @@ class DemoDrillDown {
   // size(marital) + size(marital) * size(balance)
   //   + size(marital) * size(balance) + size(education)
   @Test
-  def demoDrilldown2Level: Unit = {
+  def demoDrilldown2Level(): Unit = {
 
-    highcharts(bank)
+    val chart = highcharts(bank
       .series("name" -> "marital",
         "y" -> avg(col("balance")))
       .drilldown("name" -> "job",
         "y" -> avg(col("balance")))
       .drilldown("name" -> "education",
-        "y" -> max(col("balance")))
+        "y" -> max(col("balance"))))
       .chart(Chart.column)
-      .plot()
+
+    chart.plot()
+
+    new PrintWriter("target/demoDrilldown2Level.json") { write(chart.replaced); close }
 
 
   }
@@ -113,15 +120,18 @@ class DemoDrillDown {
   // size(marital) + size(marital) * size(balance)
   //   + size(marital) * size(balance) + size(education)
   @Test
-  def demoLineBasicDesc: Unit = {
+  def demoLineBasicDesc(): Unit = {
 
-    highcharts(bank)
+    val chart = highcharts(bank
       .seriesCol("marital")
       .series("name" -> "job",
         "y" -> avg(col("balance")))
       .drilldown("name" -> "education",
-        "y" -> avg(col("balance")))
-      .plot()
+        "y" -> avg(col("balance"))))
+
+    chart.plot()
+
+    new PrintWriter("target/demoLineBasicDesc.json") { write(chart.replaced); close }
   }
 
 }

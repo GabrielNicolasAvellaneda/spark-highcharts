@@ -59,9 +59,9 @@ abstract class BaseModel extends IModel {
     for ((name, values) <- subFields) {
       val fields = values.map {
         case (subname, value) =>
-          JField(subname, JsonImplicits.toJValue(value))
+          JField(subname, JsonConversion.toJValue(value))
       }
-      val jobj = new JObject(fields)
+      val jobj = JObject(fields)
       append(name, jobj)
     }
   }
@@ -81,11 +81,11 @@ abstract class BaseModel extends IModel {
   }
 
 
-  lazy val data: String = {
+  lazy val json: String = {
     pretty(render(result))
   }
 
-  def compactString: String = {
+  def compactJson: String = {
     compact(render(result))
   }
 
@@ -141,7 +141,7 @@ abstract class BaseModel extends IModel {
       case model: BaseModel =>
         append(name, model.result)
       case _ =>
-        append(JField(name, JsonImplicits.toJValue(value)))
+        append(JField(name, JsonConversion.toJValue(value)))
     }
 
     this
@@ -195,7 +195,7 @@ abstract class BaseModel extends IModel {
   }
 
   lazy val replaced: String = {
-    val beforeFunctionReplace: String = data
+    val beforeFunctionReplace: String = json
 
     (beforeFunctionReplace /: codes) {
       (result, item) => result.replaceAllLiterally(s""""${item._1}"""", item._2)

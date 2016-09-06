@@ -27,7 +27,7 @@ import org.junit.Test
   */
 class TestAreaBasic extends AbstractTestCase{
   @Test
-  def testAreaBasic: Unit = {
+  def testAreaBasic(): Unit = {
     val title = new Title("US and USSR nuclear stockpiles")
 
     val subtitle = new Subtitle(
@@ -56,7 +56,7 @@ class TestAreaBasic extends AbstractTestCase{
       "enabled" -> false,
       "states" -> Map("hover" -> Map("enabled" -> true)))
 
-    val areaPlotOptions = new plotOptions.Area().pointStart(1940)
+    val areaPlotOptions = PlotOptions.area.pointStart(1940)
       .marker("enabled" -> false,
         "symbol" -> "circle",
         "radius" -> "2",
@@ -73,7 +73,7 @@ class TestAreaBasic extends AbstractTestCase{
       10871, 10824, 10577, 10527, 10475, 10421, 10358, 10295, 10104).
       name("USA")
 
-    val data = seriesUSA.data
+    val data = seriesUSA.json
 
     val seriesRussia = Series(
       null, null, null, null, null, null, null, null, null, null,
@@ -86,8 +86,8 @@ class TestAreaBasic extends AbstractTestCase{
       name("USSR/Russia")
 
 
-    val chart = new Highcharts(seriesUSA, seriesRussia)
-    chart.options(new Chart("area"),
+    val chart = new Highcharts(List(seriesUSA, seriesRussia))
+    chart.options(Chart.area,
       title,
       subtitle,
       xAxis,

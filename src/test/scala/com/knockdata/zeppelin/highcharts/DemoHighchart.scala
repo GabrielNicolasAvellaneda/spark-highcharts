@@ -21,7 +21,12 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.functions._
 import org.junit.Test
 
+
+import com.knockdata.zeppelin.highcharts.model._
+
 class DemoHighchart extends AbstractTestCase{
+
+  val bank = DataSet.dfBank
 
   def debug(result: List[(List[String], Array[String], Array[Row])]): Unit = {
     val msg = result.map{case (keys, cols, rows) => keys.mkString(",") + "\n" + rows.mkString("\n")}.mkString("\n")
@@ -29,59 +34,61 @@ class DemoHighchart extends AbstractTestCase{
   }
 
   @Test
-  def test1ColumnWithAgg: Unit = {
-    val chart = convert(DataSet.dfBank,
-      List("name" -> "marital",
+  def test1ColumnWithAgg(): Unit = {
+    val chart: Highcharts = highcharts(
+      DataSet.dfBank.series("name" -> "marital",
         "y" -> avg(col("balance"))))
 
     assertEqual("src/test/scala/com/knockdata/zeppelin/highcharts/1ColumnWithAgg.json", chart)
   }
 
   @Test
-  def testDrilldown1Level: Unit = {
-    val chart = convert(DataSet.dfBank,
-      List("name" -> "marital",
-        "y" -> avg(col("balance"))),
-      List("name" -> "job",
-        "y" -> avg(col("balance"))))
+  def testDrilldown1Level(): Unit = {
+    val chart: Highcharts = highcharts(
+      DataSet.dfBank
+        .series("name" -> "marital",
+            "y" -> avg(col("balance")))
+        .drilldown(
+          "name" -> "job",
+            "y" -> avg(col("balance"))))
 
     assertEqual("src/test/scala/com/knockdata/zeppelin/highcharts/Drilldown1Level.json", chart)
   }
 
   @Test
-  def test2ColumnWithAgg: Unit = {
+  def test2ColumnWithAgg(): Unit = {
     // example for HeatMap
-    val chart = convert(DataSet.dfBank,
-      List("x" -> "marital", "y" -> "job",
+    val chart: Highcharts = highcharts(
+      DataSet.dfBank.series("x" -> "marital", "y" -> "job",
         "value" -> avg(col("balance"))))
 
     assertEqual("src/test/scala/com/knockdata/zeppelin/highcharts/2ColumnWithAgg.json", chart)
   }
 
   @Test
-  def testDrilldown2Level: Unit = {
+  def testDrilldown2Level(): Unit = {
     // with 3 levels, the output is pretty big
     // number of data point is
     // size(marital) + size(marital) * size(balance) + size(marital) * size(balance) + size(education)
-    val chart = convert(DataSet.dfBank,
-      List("name" -> "marital",
-        "y" -> avg(col("balance"))),
-      List("name" -> "job",
-        "y" -> avg(col("balance"))),
-      List("name" -> "education",
+    val chart: Highcharts = highcharts(
+      DataSet.dfBank.series(
+        "name" -> "marital",
+        "y" -> avg(col("balance")))
+          .drilldown("name" -> "job",
+        "y" -> avg(col("balance")))
+          .drilldown("name" -> "education",
         "y" -> avg(col("balance"))))
 
     assertEqual("src/test/scala/com/knockdata/zeppelin/highcharts/Drilldown2Level.json", chart)
   }
 
   @Test
-  def test2ColumnDrilldown1Level: Unit = {
+  def test2ColumnDrilldown1Level(): Unit = {
     // there is no such Highchart which accept job field
     // it is only for a test to see drilldown works with 2 name column
-    val chart = convert(DataSet.dfBank,
-      List("name" -> "marital", "job" -> "job",
-        "y" -> avg(col("balance"))),
-      List("name" -> "education",
+    val chart: Highcharts = highcharts(
+      DataSet.dfBank.series("name" -> "marital", "job" -> "job",
+        "y" -> avg(col("balance"))).drilldown("name" -> "education",
         "y" -> avg(col("balance"))))
 
     assertEqual("src/test/scala/com/knockdata/zeppelin/highcharts/2ColumnDrilldown1Level.json", chart)
@@ -89,25 +96,20 @@ class DemoHighchart extends AbstractTestCase{
   }
 
   @Test
-  def testSeriesWithAgg: Unit = {
-    val chart = convert(DataSet.dfBank,
-      "marital",
-      List("name" -> "job",
+  def testSeriesWithAgg(): Unit = {
+    val chart: Highcharts = highcharts(DataSet.dfBank.seriesCol("marital").series("name" -> "job",
         "y" -> avg(col("balance"))))
 
     assertEqual("src/test/scala/com/knockdata/zeppelin/highcharts/SeriesWithAgg.json", chart)
-
   }
 
   @Test
-  def testSeriesDrilldown1Level: Unit = {
+  def testSeriesDrilldown1Level(): Unit = {
     // with 3 levels, the output is pretty big
     // number of data point is
     // size(marital) + size(marital) * size(balance) + size(marital) * size(balance) + size(education)
-    val chart = convert(DataSet.dfBank, "marital",
-      List("name" -> "job",
-        "y" -> avg(col("balance"))),
-      List("name" -> "education",
+    val chart: Highcharts = highcharts(DataSet.dfBank.seriesCol("marital").series("name" -> "job",
+        "y" -> avg(col("balance"))).drilldown("name" -> "education",
         "y" -> avg(col("balance"))))
 
     assertEqual("src/test/scala/com/knockdata/zeppelin/highcharts/SeriesDrilldown1Level.json", chart)

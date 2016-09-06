@@ -28,7 +28,7 @@ class Axis(text: String = "") extends BaseModel with PublicApply {
     if (text != "") {
       append("title", "text", text)
     }
-    super.preProcessResult
+    super.preProcessResult()
   }
 
 
@@ -50,6 +50,10 @@ class Axis(text: String = "") extends BaseModel with PublicApply {
 
   def categories(values: String*): this.type = {
     append("categories", values.toList)
+  }
+
+  def categories(values: List[String]): this.type = {
+    append("categories", values)
   }
 
   def ceiling(value: Int): this.type = {
@@ -193,8 +197,18 @@ class Axis(text: String = "") extends BaseModel with PublicApply {
     append("plotBands", values.toList)
   }
 
+  // plot ONE band
+  def plotBand(values: (String, Any)*): this.type = {
+    append("plotBands", List(values.toMap))
+  }
+
   def plotLines(values: Map[String, Any]*): this.type = {
     append("plotLines", values.toList)
+  }
+
+  // plot ONE line
+  def plotLine(values: (String, Any)*): this.type = {
+    append("plotLines", List(values.toMap))
   }
 
   def reversed(value: Boolean): this.type = {

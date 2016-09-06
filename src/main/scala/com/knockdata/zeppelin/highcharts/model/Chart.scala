@@ -147,6 +147,8 @@ object Chart {
 
   def column = new Chart("column")
 
+  def columnrange = new Chart("columnrange")
+
   def errorbar = new Chart("errorbar")
 
   def funnel = new Chart("funnel")
@@ -155,17 +157,19 @@ object Chart {
 
   def heatmap = new Chart("heatmap")
 
+  def line = new Chart("line")
+
   def pie = new Chart("pie")
 
-  def polygon = new Chart("Polygon")
+  def polygon = new Chart("polygon")
 
-  def pyramid = new Chart("Pyramid")
+  def pyramid = new Chart("pyramid")
 
   def scatter = new Chart("scatter")
 
   def solidgauge = new Chart("solidgauge")
 
-  def spline = new Chart("Spline")
+  def spline = new Chart("spline")
 
   def treemap = new Chart("treemap")
 

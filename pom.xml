@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.knockdata</groupId>
   <artifactId>zeppelin-highcharts</artifactId>
-  <version>0.5-SNAPSHOT</version>
+  <version>0.6.1</version>
   <inceptionYear>2016</inceptionYear>
   <name>Zeppelin Highcharts POM</name>
   <description>Provide Highcharts Support in Zeppelin</description>
@@ -17,7 +17,7 @@
   <scm>
     <connection>scm:git:git@github.com:knockdata/zeppelin-highcharts.git</connection>
     <url>scm:git:git@github.com:knockdata/zeppelin-highcharts</url>
-    <tag>zeppelin-highcharts-0.1</tag>
+    <tag>zeppelin-highcharts-0.6.0</tag>
   </scm>
   <developers>
     <developer>
@@ -33,6 +33,7 @@
     <spark.version>1.6.1</spark.version>
     <scala.version>2.10.4</scala.version>
     <scala.binary.version>2.10</scala.binary.version>
+
     <dependency.locations.enabled>false</dependency.locations.enabled>
     <!--<scala.version>2.11.8</scala.version>-->
     <!--<scala.binary.version>2.11</scala.binary.version>-->
@@ -88,6 +89,11 @@
       <version>${spark.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>com.databricks</groupId>
+      <artifactId>spark-csv_${scala.binary.version}</artifactId>
+      <version>1.4.0</version>
+    </dependency>
     <!--<dependency>-->
       <!--<groupId>net.sf.saxon</groupId>-->
       <!--<artifactId>saxon</artifactId>-->
@@ -96,7 +102,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.4</version>
+      <version>4.7</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -309,4 +315,25 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>spark-1.6</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <spark.version>1.6.1</spark.version>
+        <scala.version>2.10.4</scala.version>
+        <scala.binary.version>2.10</scala.binary.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>spark-2.0</id>
+      <properties>
+        <spark.version>2.0.0</spark.version>
+        <scala.version>2.11.8</scala.version>
+        <scala.binary.version>2.11</scala.binary.version>
+      </properties>
+    </profile>
+  </profiles>
 </project>
